@@ -1,0 +1,6 @@
+*.py[co]
+*.config
+*.swp
+*.log
+*.pid
+*~
