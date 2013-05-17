@@ -19,12 +19,16 @@ NAME = "RSSCat"
 VERSION = "0.1"
 CREATEPID = True
 PIDFILE = "rsscat.pid"
+THREADS = None
 
 import logging, logging.handlers
+from rsscat.threads import Threads
 
 def getLogger(name, level=logging.INFO, handlers=[]):
 	logger = logging.getLogger(name)
-	logger.setLevel(level)
+
+	if len(handlers) != 0:
+		logger.setLevel(level)
 
 	if "console" in handlers:
 		strm = logging.StreamHandler()
@@ -42,3 +46,16 @@ def getLogger(name, level=logging.INFO, handlers=[]):
 		logger.addHandler(fl)
 
 	return logger
+
+def initialize():
+	global THREADS
+
+	getLogger(__name__).info("Initializing...")
+
+	if THREADS == None:
+		THREADS = Threads()
+
+	THREADS.registerThread("test", "1")
+
+if __name__ == "__main__":
+	getLogger(__name__, handlers=["console"]).fatal("This file should NOT be called directly!")

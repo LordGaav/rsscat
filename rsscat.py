@@ -20,8 +20,8 @@ import os
 import logging
 import rsscat
 
-logger = rsscat.getLogger("rsscat", handlers={"console": None, "file": {"logfile": "test.log"}})
-logger.info("RSSCat version {0} starting...".format(rsscat.VERSION))
+logger = rsscat.getLogger("rsscat", level=logging.DEBUG, handlers={"console": None, "file": {"logfile": "test.log"}})
+logger.info("{0} version {1} starting...".format(rsscat.NAME, rsscat.VERSION))
 
 if sys.version_info < (2, 7):
 	logger.error("Sorry, {0} requires Python 2.7.".format(rsscat.NAME))
@@ -58,12 +58,15 @@ def daemonize():
 		logger.info("Writing PID {0} to {1}".format(pid, str(rsscat.PIDFILE)))
 		file(rsscat.PIDFILE, 'w').write("%s\n" % pid)
 
+	logger.info("Forked main worker into background...")
+
 import pymongo
-from rsscat import mongo
+from rsscat import mongo, worker
 
 def main():
-	mongo.prepare_database()
 	daemonize()
+	mongo.prepare_database()
+	rsscat.initialize()
 
 if __name__ == "__main__":
 	main()
