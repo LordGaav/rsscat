@@ -61,8 +61,7 @@ def initialize():
 
 	helloThread = Scheduler(5, hello, "HelloThread", 10, "Hello world!")
 
-	THREADS.registerThread("hello", helloThread)
-	THREADS.getThread("hello").start()
+	THREADS.registerThread("hello", helloThread).start()
 
 def stopAll():
 	global THREADS

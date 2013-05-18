@@ -35,6 +35,8 @@ class Threads(object):
 
 		self.thread_list[name] = thread
 		self.logger.debug("Registered thread {0}".format(name))
+
+		return thread
 	
 	def getThreads(self):
 		return self.thread_list.keys()
