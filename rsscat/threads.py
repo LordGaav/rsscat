@@ -16,6 +16,7 @@
 # along with rsscat. If not, see <http://www.gnu.org/licenses/>.
 
 import rsscat
+import threading
 
 class Threads(object):
 	thread_list = {}
@@ -24,6 +25,10 @@ class Threads(object):
 		self.logger = rsscat.getLogger(__name__)
 
 	def registerThread(self, name, thread):
+		if not isinstance(thread, threading.Thread):
+			self.logger.error("Thread {0} is not actually a Thread!".format(name))
+			raise Exception("Thread {0} is not actually a Thread!".format(name))
+
 		if name in self.thread_list:
 			self.logger.error("Thread {0} already registered!".format(name))
 			raise Exception("Thread {0} already registered!".format(name))
