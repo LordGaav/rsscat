@@ -60,13 +60,21 @@ def daemonize():
 
 	logger.info("Forked main worker into background...")
 
-import pymongo
+
+import pymongo, time, signal
 from rsscat import mongo
+
+signal.signal(signal.SIGINT, rsscat.signal_handler)
+signal.signal(signal.SIGTERM, rsscat.signal_handler)
 
 def main():
 	daemonize()
 	mongo.prepare_database()
 	rsscat.initialize()
+
+	# Stay alive to handle signals
+	while (True):
+		time.sleep(2)
 
 if __name__ == "__main__":
 	main()

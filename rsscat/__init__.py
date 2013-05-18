@@ -21,8 +21,9 @@ CREATEPID = True
 PIDFILE = "rsscat.pid"
 THREADS = None
 
-import logging, logging.handlers
+import logging, logging.handlers, time, os
 from rsscat.threads import Threads
+from rsscat.scheduler import Scheduler
 
 def getLogger(name, level=logging.INFO, handlers=[]):
 	logger = logging.getLogger(name)
@@ -47,6 +48,9 @@ def getLogger(name, level=logging.INFO, handlers=[]):
 
 	return logger
 
+def hello(text):
+	getLogger(__name__).info(text)
+
 def initialize():
 	global THREADS
 
@@ -55,7 +59,32 @@ def initialize():
 	if THREADS == None:
 		THREADS = Threads()
 
-	THREADS.registerThread("test", "1")
+	helloThread = Scheduler(5, hello, "HelloThread", 10, "Hello world!")
+
+	THREADS.registerThread("hello", helloThread)
+	THREADS.getThread("hello").start()
+
+def stopAll():
+	global THREADS
+
+	getLogger(__name__).info("Stopping {0} threads...".format(NAME))
+
+	for thread in THREADS.getThreads():
+		t = THREADS.getThread(thread)
+		getLogger(__name__).info("Stopping {0}".format(t.name))
+		t.stop = True
+		t.join()
+		THREADS.unregisterThread(thread)
+
+	getLogger(__name__).info("Stopped all threads")
+	getLogger(__name__).fatal("Comitting suicide")
+
+	os._exit(0)
+
+def signal_handler(signum=None, frame=None):
+	if type(signum) != type(None):
+		getLogger(__name__).info("Caught signal {0}".format(signum))
+		stopAll()
 
 if __name__ == "__main__":
 	getLogger(__name__, handlers=["console"]).fatal("This file should NOT be called directly!")
