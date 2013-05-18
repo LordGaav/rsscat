@@ -32,14 +32,15 @@ class Scheduler(threading.Thread):
 		self.main_kwargs = kwargs
 
 		self.stop = False
+		now = datetime.datetime.now()
 		if startNow == True:
 			self.lastRun = datetime.datetime.min
 			self.logger.debug("Thread {0} will start immediately".format(name))
 		else:
-			self.lastRun = datetime.datetime.now()
+			self.lastRun = now
 			if isinstance(startNow, (int, long)):
-				self.lastRun = self.lastRun + datetime.timedelta(seconds=startNow)
-			wait = (self.lastRun - datetime.datetime.now()).seconds + delay
+				self.lastRun += datetime.timedelta(seconds=startNow)
+			wait = (self.lastRun - now).seconds + delay
 			self.logger.debug("Thread {0} will start in {1} seconds".format(name, wait))
 	
 	def setStartAction(self, action, *args, **kwargs):
