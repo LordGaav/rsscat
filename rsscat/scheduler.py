@@ -26,10 +26,10 @@ class Scheduler(threading.Thread):
 		super(Scheduler, self).__init__(None, None, name, None, None)
 
 		self.delay = delay
-		self.action = action
+		self.main_action = action
 		self.name = name
-		self.args = args
-		self.kwargs = kwargs
+		self.main_args = args
+		self.main_kwargs = kwargs
 
 		self.stop = False
 		if startNow == True:
@@ -41,14 +41,34 @@ class Scheduler(threading.Thread):
 				self.lastRun = self.lastRun + datetime.timedelta(seconds=startNow)
 			wait = (self.lastRun - datetime.datetime.now()).seconds + delay
 			self.logger.debug("Thread {0} will start in {1} seconds".format(name, wait))
+	
+	def setStartAction(self, action, *args, **kwargs):
+		self.init_action = action
+		self.init_args = args
+		self.init_kwargs = kwargs
+	
+	def setStopAction(self, action, *args, **kwargs):
+		self.stop_action = action
+		self.stop_args = args
+		self.stop_kwargs = kwargs
 
 	def run(self):
 		self.logger.debug("Thread {0} is entering main loop".format(self.name))
+
+		if hasattr(self, "init_action"):
+			self.logger.debug("Thread {0} is calling its init action")
+			self.init_action(*self.init_args, **self.kwargs)
+
 		while not self.stop:
 			if (datetime.datetime.now() - self.lastRun).total_seconds() > self.delay:
 				self.logger.debug("Thread {0} is running".format(self.name))
-				self.action(*self.args, **self.kwargs)
+				self.main_action(*self.main_args, **self.main_kwargs)
 				self.lastRun = datetime.datetime.now()
 				self.logger.debug("Thread {0} is done".format(self.name))
 			time.sleep(1)
+
+		if hasattr(self, "stop_action"):
+			self.logger.debug("Thread {0} is calling its stop action")
+			self.stop_action(*self.stop_args, **self.stop_kwargs)
+
 		self.logger.debug("Thread {0} is exiting main loop".format(self.name))
