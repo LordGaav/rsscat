@@ -61,7 +61,7 @@ def daemonize():
 	logger.info("Forked main worker into background...")
 
 import pymongo
-from rsscat import mongo, worker
+from rsscat import mongo
 
 def main():
 	daemonize()
