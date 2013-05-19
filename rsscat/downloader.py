@@ -17,6 +17,7 @@
 
 import rsscat
 from rsscat.mongo import get_collection
+from rsscat.mongo import dbref as dbref
 import threading, datetime, time
 import feedparser
 
@@ -59,9 +60,10 @@ def processItems(_feed):
 				entry_date = getattr(entry, field)
 				entry_date = datetime.datetime.fromtimestamp(time.mktime(entry_date))
 				break
+
 		item = {
 			'_id': entry.id if "id" in entry else entry.link,
-			'feed': _feed['_id'],
+			'feed': dbref("feeds", _feed['_id']),
 			'url': entry.link,
 			'date': entry_date,
 			'processed': False

@@ -17,6 +17,7 @@
 
 import rsscat
 from pymongo.connection import Connection
+from bson.dbref import DBRef as dbref
 
 def get_collection(name):
 	return Connection()['rsscat'][name]
