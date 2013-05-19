@@ -58,7 +58,7 @@ class Scheduler(threading.Thread):
 
 		if hasattr(self, "init_action"):
 			self.logger.debug("Thread {0} is calling its init action")
-			self.init_action(*self.init_args, **self.kwargs)
+			self.init_action(*self.init_args, **self.init_kwargs)
 
 		while not self.stop:
 			if (datetime.datetime.now() - self.lastRun).total_seconds() > self.delay:
