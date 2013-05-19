@@ -19,6 +19,10 @@ NAME = "RSSCat"
 VERSION = "0.1"
 CREATEPID = True
 PIDFILE = "rsscat.pid"
+
+SETUID = None
+SETGID = None
+
 THREADS = None
 
 import logging, logging.handlers, time, os

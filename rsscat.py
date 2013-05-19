@@ -15,9 +15,7 @@
 # 
 # You should have received a copy of the GNU General Public License
 # along with rsscat. If not, see <http://www.gnu.org/licenses/>.
-import sys
-import os
-import logging
+import sys, os, pwd, grp, logging
 import rsscat
 
 logger = rsscat.getLogger("rsscat", level=logging.DEBUG, handlers={"console": None, "file": {"logfile": "test.log"}})
@@ -37,6 +35,13 @@ def daemonize():
 		raise RuntimeError("First fork failed: %s [%d]" % (e.strerror, e.errno))
 
 	os.setsid()
+	if os.getuid() == 0:
+		if rsscat.SETGID:
+			gid = grp.getgrnam(rsscat.SETGID).gr_gid
+			os.setgid(gid)
+		if rsscat.SETUID:
+			uid = pwd.getpwnam(rsscat.SETUID).pw_uid
+			os.setuid(uid)
 
 	# Make sure I can read my own files and shut out others
 	prev = os.umask(0)
