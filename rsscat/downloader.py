@@ -18,7 +18,7 @@
 import rsscat
 from rsscat.mongo import get_collection
 from rsscat.mongo import dbref as dbref
-import threading, datetime, time
+import datetime, time
 import feedparser
 
 def downloadFeeds():

@@ -16,9 +16,7 @@
 # along with rsscat. If not, see <http://www.gnu.org/licenses/>.
 
 import rsscat
-import threading
-import datetime
-import time
+import threading, datetime, time
 
 class Scheduler(threading.Thread):
 	def __init__(self, delay, action, name, startNow=False, *args, **kwargs):
@@ -33,7 +31,7 @@ class Scheduler(threading.Thread):
 
 		self.stop = False
 		now = datetime.datetime.now()
-		if startNow == True:
+		if startNow is True:
 			self.lastRun = datetime.datetime.min
 			self.logger.debug("Thread {0} will start immediately".format(name))
 		else:

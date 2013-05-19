@@ -35,7 +35,7 @@ def main():
 	rsscat.startAll()
 
 	# Stay alive to handle signals
-	while (True):
+	while True:
 		time.sleep(2)
 
 if __name__ == "__main__":

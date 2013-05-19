@@ -25,7 +25,7 @@ SETGID = None
 
 THREADS = None
 
-import logging, logging.handlers, time, os, pwd, grp, sys
+import logging, logging.handlers, os, pwd, grp, sys
 from rsscat.threads import Threads
 from rsscat.scheduler import Scheduler
 from rsscat.downloader import downloadFeeds
@@ -106,7 +106,7 @@ def initialize():
 
 	getLogger(__name__).info("Initializing...")
 
-	if THREADS == None:
+	if THREADS is None:
 		THREADS = Threads()
 
 	downloadThread = Scheduler(20, downloadFeeds, "DownloadThread", True)
