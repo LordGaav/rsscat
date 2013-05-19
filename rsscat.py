@@ -70,6 +70,7 @@ signal.signal(signal.SIGTERM, rsscat.signal_handler)
 def main():
 	daemonize()
 	rsscat.initialize()
+	rsscat.startAll()
 
 	# Stay alive to handle signals
 	while (True):

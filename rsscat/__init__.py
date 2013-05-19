@@ -62,7 +62,19 @@ def initialize():
 
 	downloadThread = Scheduler(20, downloadFeeds, "DownloadThread", True)
 
-	THREADS.registerThread("download", downloadThread).start()
+	THREADS.registerThread("download", downloadThread)
+
+def startAll():
+	global THREADS
+
+	getLogger(__name__).info("Starting {0} threads...".format(NAME))
+
+	for thread in THREADS.getThreads():
+		t = THREADS.getThread(thread)
+		getLogger(__name__).debug("Starting {0}".format(t.name))
+		t.start()
+
+	getLogger(__name__).info("Started all threads")
 
 def stopAll():
 	global THREADS
