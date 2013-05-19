@@ -66,7 +66,7 @@ def processItems(_feed):
 			'feed': dbref("feeds", _feed['_id']),
 			'url': entry.link,
 			'date': entry_date,
-			'processed': False
+			'status': 'new'
 		}
 
 		col.insert(item)
