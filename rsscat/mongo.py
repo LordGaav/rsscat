@@ -18,11 +18,5 @@
 import rsscat
 from pymongo.connection import Connection
 
-connection = Connection()
-feeds_collection = None
-
-def prepare_database():
-	logger = rsscat.getLogger(__name__)
-	logger.info("Preparing mongo database")
-	db = connection['rsscat']
-	feeds_collection = db['feeds']
+def get_collection(name):
+	return Connection()['rsscat'][name]

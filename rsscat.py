@@ -69,7 +69,6 @@ signal.signal(signal.SIGTERM, rsscat.signal_handler)
 
 def main():
 	daemonize()
-	mongo.prepare_database()
 	rsscat.initialize()
 
 	# Stay alive to handle signals
