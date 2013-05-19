@@ -25,7 +25,7 @@ SETGID = None
 
 THREADS = None
 
-import logging, logging.handlers, time, os
+import logging, logging.handlers, time, os, pwd, grp, sys
 from rsscat.threads import Threads
 from rsscat.scheduler import Scheduler
 from rsscat.downloader import downloadFeeds
@@ -55,6 +55,51 @@ def getLogger(name, level=logging.INFO, handlers=[]):
 
 def hello(text):
 	getLogger(__name__).info(text)
+
+def daemonize():
+	global SETGID, SETUID, CREATEPID
+
+	# Make a non-session-leader child process
+	try:
+		pid = os.fork()
+		if pid != 0:
+			sys.exit(0)
+	except OSError, e:
+		raise RuntimeError("First fork failed: {0} [{1}]".format(e.strerror, e.errno))
+
+	os.setsid()
+	if os.getuid() == 0:
+		if SETGID:
+			gid = grp.getgrnam(SETGID).gr_gid
+			os.setgid(gid)
+		if SETUID:
+			uid = pwd.getpwnam(SETUID).pw_uid
+			os.setuid(uid)
+
+	# Make sure I can read my own files and shut out others
+	prev = os.umask(0)
+	os.umask(prev and int('077', 8))
+
+	# Make the child a session-leader by detaching from the terminal
+	try:
+		pid = os.fork()
+		if pid != 0:
+			sys.exit(0)
+	except OSError, e:
+		raise RuntimeError("Second fork failed: {0} [{1}]".format(e.strerror, e.errno))
+
+	dev_null = file('/dev/null', 'r')
+	os.dup2(dev_null.fileno(), sys.stdin.fileno())
+
+	if CREATEPID:
+		try:
+			pid = str(os.getpid())
+			getLogger(__name__).info("Writing PID {0} to {1}".format(pid, str(CREATEPID)))
+			file(CREATEPID, 'w').write("%s\n" % pid)
+		except IOError, e:
+			raise RuntimeError("Failed to create PID file: {0} [{1}]".format(e.strerror, e.errno))
+
+	getLogger(__name__).info("Forked into background...")
 
 def initialize():
 	global THREADS
