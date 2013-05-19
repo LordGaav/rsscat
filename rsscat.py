@@ -30,7 +30,8 @@ signal.signal(signal.SIGINT, rsscat.signal_handler)
 signal.signal(signal.SIGTERM, rsscat.signal_handler)
 
 def main():
-	rsscat.daemonize()
+	if rsscat.DAEMON:
+		rsscat.daemonize()
 	rsscat.initialize()
 	rsscat.startAll()
 

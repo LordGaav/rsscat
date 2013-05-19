@@ -18,6 +18,7 @@
 NAME = "RSSCat"
 VERSION = "0.1"
 
+DAEMON = False
 CREATEPID = "rsscat.pid"
 
 SETUID = None
@@ -140,7 +141,7 @@ def stopAll():
 	getLogger(__name__).info("Stopped all threads")
 	getLogger(__name__).fatal("Comitting suicide")
 
-	if CREATEPID:
+	if DAEMON and CREATEPID:
 		getLogger(__name__).info("Removing PID file")
 		os.unlink(CREATEPID)
 
