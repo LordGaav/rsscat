@@ -24,6 +24,7 @@ THREADS = None
 import logging, logging.handlers, time, os
 from rsscat.threads import Threads
 from rsscat.scheduler import Scheduler
+from rsscat.downloader import downloadFeeds
 
 def getLogger(name, level=logging.INFO, handlers=[]):
 	logger = logging.getLogger(name)
@@ -59,9 +60,9 @@ def initialize():
 	if THREADS == None:
 		THREADS = Threads()
 
-	helloThread = Scheduler(5, hello, "HelloThread", 10, "Hello world!")
+	downloadThread = Scheduler(20, downloadFeeds, "DownloadThread", True)
 
-	THREADS.registerThread("hello", helloThread).start()
+	THREADS.registerThread("download", downloadThread).start()
 
 def stopAll():
 	global THREADS

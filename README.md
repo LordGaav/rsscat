@@ -8,6 +8,7 @@ Requirements
 
 * MongoDB
 * python-mongodb
+* python-feedparser
 
 Developed / Tested on
 =====================
