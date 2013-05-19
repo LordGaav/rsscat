@@ -17,8 +17,8 @@
 
 NAME = "RSSCat"
 VERSION = "0.1"
-CREATEPID = True
-PIDFILE = "rsscat.pid"
+
+CREATEPID = "rsscat.pid"
 
 SETUID = None
 SETGID = None
@@ -81,7 +81,7 @@ def startAll():
 	getLogger(__name__).info("Started all threads")
 
 def stopAll():
-	global THREADS
+	global THREADS, CREATEPID
 
 	getLogger(__name__).info("Stopping {0} threads...".format(NAME))
 
@@ -94,6 +94,10 @@ def stopAll():
 
 	getLogger(__name__).info("Stopped all threads")
 	getLogger(__name__).fatal("Comitting suicide")
+
+	if CREATEPID:
+		getLogger(__name__).info("Removing PID file")
+		os.unlink(CREATEPID)
 
 	os._exit(0)
 

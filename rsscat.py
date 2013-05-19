@@ -32,7 +32,7 @@ def daemonize():
 		if pid != 0:
 			sys.exit(0)
 	except OSError, e:
-		raise RuntimeError("First fork failed: %s [%d]" % (e.strerror, e.errno))
+		raise RuntimeError("First fork failed: {0} [{1}]".format(e.strerror, e.errno))
 
 	os.setsid()
 	if os.getuid() == 0:
@@ -53,15 +53,18 @@ def daemonize():
 		if pid != 0:
 			sys.exit(0)
 	except OSError, e:
-		raise RuntimeError("Second fork failed: %s [%d]" % (e.strerror, e.errno))
+		raise RuntimeError("Second fork failed: {0} [{1}]".format(e.strerror, e.errno))
 
 	dev_null = file('/dev/null', 'r')
 	os.dup2(dev_null.fileno(), sys.stdin.fileno())
 
 	if rsscat.CREATEPID:
-		pid = str(os.getpid())
-		logger.info("Writing PID {0} to {1}".format(pid, str(rsscat.PIDFILE)))
-		file(rsscat.PIDFILE, 'w').write("%s\n" % pid)
+		try:
+			pid = str(os.getpid())
+			logger.info("Writing PID {0} to {1}".format(pid, str(rsscat.CREATEPID)))
+			file(rsscat.CREATEPID, 'w').write("%s\n" % pid)
+		except IOError, e:
+			raise RuntimeError("Failed to create PID file: {0} [{1}]".format(e.strerror, e.errno))
 
 	logger.info("Forked main worker into background...")
 
