@@ -63,7 +63,11 @@ class Scheduler(threading.Thread):
 		while not self.stop:
 			if (datetime.datetime.now() - self.lastRun).total_seconds() > self.delay:
 				self.logger.debug("Thread {0} is running".format(self.name))
-				self.main_action(*self.main_args, **self.main_kwargs)
+				try:
+					self.main_action(*self.main_args, **self.main_kwargs)
+				except Exception:
+					self.logger.exception("Thread {0} generated an exception!".format(self.name))
+
 				self.lastRun = datetime.datetime.now()
 				self.logger.debug("Thread {0} is done".format(self.name))
 			time.sleep(1)
