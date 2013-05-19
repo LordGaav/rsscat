@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU General Public License
 # along with rsscat. If not, see <http://www.gnu.org/licenses/>.
 
-import sys, logging
+import sys, logging, time, signal
 import rsscat
 
 logger = rsscat.getLogger("rsscat", level=logging.DEBUG, handlers={"console": None, "file": {"logfile": "test.log"}})
@@ -25,9 +25,6 @@ logger.info("{0} version {1} starting...".format(rsscat.NAME, rsscat.VERSION))
 if sys.version_info < (2, 7):
 	logger.error("Sorry, {0} requires Python 2.7.".format(rsscat.NAME))
 	sys.exit(1)
-
-import pymongo, time, signal
-from rsscat import mongo
 
 signal.signal(signal.SIGINT, rsscat.signal_handler)
 signal.signal(signal.SIGTERM, rsscat.signal_handler)
