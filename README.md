@@ -7,11 +7,16 @@ Requirements
 ============
 
 * MongoDB
-* python-mongodb
+* python-pymongo
 * python-feedparser
 * python-requests
 * python-bittorrent
-* configobj
+* python-configobj
+
+On Ubuntu, just run
+```
+apt-get install mongodb-server mongodb-clients python-pymongo python-feedparser python-requests python-bittorrent python-configobj
+```
 
 Developed / Tested on
 =====================
