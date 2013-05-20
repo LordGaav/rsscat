@@ -95,7 +95,7 @@ def downloadItems():
 	for item in items:
 		logger.debug("Processing new item: {0}".format(item['title']))
 
-		req = requests.get(item['url'], stream=True)
+		req = requests.get(item['url'])
 		if "content-disposition" in req.headers and req.headers['content-disposition'].find('filename=') != -1:
 			filename = req.headers['content-disposition'].split("filename=")[1].replace("\"", "")
 		else:
