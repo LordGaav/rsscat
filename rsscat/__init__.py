@@ -28,10 +28,13 @@ THREADS = None
 
 TORRENTDIR = 'torrents'
 
+PUSHOVER_USER_KEY = None
+
 import logging, logging.handlers, os, pwd, grp, sys
 from rsscat.threads import Threads
 from rsscat.scheduler import Scheduler
 from rsscat.downloader import downloadFeeds, downloadItems
+from rsscat.pushover import pushover_notify
 
 def getLogger(name, level=logging.INFO, handlers=[]):
 	logger = logging.getLogger(name)
@@ -117,6 +120,10 @@ def initialize():
 
 	THREADS.registerThread("update", updateThread)
 	THREADS.registerThread("torrent", torrentThread)
+
+	if PUSHOVER_USER_KEY:
+		notifyThread = Scheduler(20, pushover_notify, "NotifyThread", False)
+		THREADS.registerThread("notify", notifyThread)
 
 def startAll():
 	global THREADS
