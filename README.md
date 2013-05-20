@@ -9,6 +9,8 @@ Requirements
 * MongoDB
 * python-mongodb
 * python-feedparser
+* python-requests
+* python-bittorrent
 
 Developed / Tested on
 =====================

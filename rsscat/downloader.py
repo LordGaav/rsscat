@@ -18,8 +18,11 @@
 import rsscat
 from rsscat.mongo import get_collection
 from rsscat.mongo import dbref as dbref
-import datetime, time
+import datetime, time, os, hashlib
 import feedparser
+import requests
+import urlparse
+import BitTorrent.bencode
 
 def downloadFeeds():
 	logger = rsscat.getLogger("{0}.{1}".format(__name__, "downloadFeeds"))
@@ -64,6 +67,7 @@ def processItems(_feed):
 		item = {
 			'_id': entry.id if "id" in entry else entry.link,
 			'feed': dbref("feeds", _feed['_id']),
+			'title': entry.title if "title" in entry else entry.link,
 			'url': entry.link,
 			'date': entry_date,
 			'status': 'new'
@@ -72,3 +76,70 @@ def processItems(_feed):
 		col.insert(item)
 		logger.info("Inserted new item for feed {0}: {1}".format(_feed['name'], item['_id']))
 
+def downloadItems():
+	logger = rsscat.getLogger("{0}.{1}".format(__name__, "downloadItems"))
+	col = get_collection('items')
+	items = col.find({ 'status': 'new' })
+
+	if items.count() == 0:
+		logger.debug("No new items found to download")
+		return
+
+	if not os.path.exists(rsscat.TORRENTDIR):
+		try:
+			os.mkdir(rsscat.TORRENTDIR)
+		except OSError:
+			logger.exception("Failed to create TORRENTDIR")
+			return
+
+	for item in items:
+		logger.debug("Processing new item: {0}".format(item['title']))
+
+		req = requests.get(item['url'], stream=True)
+		if "content-disposition" in req.headers and req.headers['content-disposition'].find('filename=') != -1:
+			filename = req.headers['content-disposition'].split("filename=")[1].replace("\"", "")
+		else:
+			dis = urlparse.urlparse(item['url'])
+			filename, ext = os.path.splitext(os.path.basename(dis.path))
+			if ext == ".torrent":
+				filename = filename + ext
+
+		raw_torrent = req.content
+		try:
+			torrent = BitTorrent.bencode.bdecode(raw_torrent)
+		except ValueError:
+			logger.exception("Failed to decode torrent for {0}".format(item['url']))
+			continue
+
+		info_hash = _get_info_hash(torrent['info'])
+		if filename is None:
+			filename = "{0}.torrent".format(info_hash)
+
+		if col.find({ 'info-hash': info_hash}).count() > 0:
+			logger.warning(("A torrent for INFO HASH {0} has already been processed, skipping {1}".format(info_hash, filename)))
+			col.update({ "_id": item['_id'] }, { '$set': { 'status': 'duplicate' } })
+			continue
+
+		col.update({ "_id": item['_id'] }, { '$set': { 'info-hash': info_hash } })
+
+		if os.path.exists(os.path.join(rsscat.TORRENTDIR, filename)):
+			logger.debug("File already exists, skipping")
+			col.update({ "_id": item['_id'] }, { '$set': { 'status': 'error' } })
+			continue
+
+		try:
+			out = open(os.path.join(rsscat.TORRENTDIR, filename), "w")
+			out.write(raw_torrent)
+			out.close()
+		except OSError:
+			logger.exception("Failed to write torrent file {0} to disk".format(filename))
+			col.update({ "_id": item['_id'] }, { '$set': { 'status': 'error' } })
+			continue
+
+		col.update({ "_id": item['_id'] }, { '$set': { 'status': 'processed' } })
+
+def _get_info_hash(info):
+	sha = hashlib.sha1()
+	sha.update(BitTorrent.bencode.bencode(info))
+
+	return sha.hexdigest()

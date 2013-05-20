@@ -26,10 +26,12 @@ SETGID = None
 
 THREADS = None
 
+TORRENTDIR = 'torrents'
+
 import logging, logging.handlers, os, pwd, grp, sys
 from rsscat.threads import Threads
 from rsscat.scheduler import Scheduler
-from rsscat.downloader import downloadFeeds
+from rsscat.downloader import downloadFeeds, downloadItems
 
 def getLogger(name, level=logging.INFO, handlers=[]):
 	logger = logging.getLogger(name)
@@ -110,9 +112,11 @@ def initialize():
 	if THREADS is None:
 		THREADS = Threads()
 
-	downloadThread = Scheduler(20, downloadFeeds, "DownloadThread", True)
+	updateThread = Scheduler(60, downloadFeeds, "UpdateThread", True)
+	torrentThread = Scheduler(20, downloadItems, "TorrentThread", False)
 
-	THREADS.registerThread("download", downloadThread)
+	THREADS.registerThread("update", updateThread)
+	THREADS.registerThread("torrent", torrentThread)
 
 def startAll():
 	global THREADS
