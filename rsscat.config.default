@@ -1,0 +1,35 @@
+#####
+# Downloading options
+#####
+
+## Specify where to download torrent files to
+## Note: required option, RSSCat will exit without it
+torrentdir=
+
+#####
+# Daemonization options
+#####
+
+## If set to True, will fork RSSCat into the background and turn of output to console
+daemonize=False
+
+## When set, will drop privileges to this uid and gid when forking into background
+## Note: requires RSSCat to be run as root, with daemonize set to True
+uid=
+gid=
+
+## When set, will create a PID file upon daemonizing at the specified location
+pidfile=/var/run/rsscat.pid
+
+## When set, will create a logfile at the specified location
+logfile=/var/log/rsscat.log
+
+## Specify what level messages should be logged. A good default value is INFO
+loglevel=INFO
+
+#####
+# Notification options
+#####
+
+## When set, will send Pushover notifications upon downloading new torrents
+pushover_user_key=

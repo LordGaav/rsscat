@@ -18,15 +18,15 @@
 NAME = "RSSCat"
 VERSION = "0.1"
 
-DAEMON = False
-CREATEPID = "rsscat.pid"
+DAEMON = None
+CREATEPID = None
 
 SETUID = None
 SETGID = None
 
 THREADS = None
 
-TORRENTDIR = 'torrents'
+TORRENTDIR = None
 
 PUSHOVER_USER_KEY = None
 

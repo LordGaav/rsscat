@@ -11,6 +11,7 @@ Requirements
 * python-feedparser
 * python-requests
 * python-bittorrent
+* configobj
 
 Developed / Tested on
 =====================
