@@ -1,6 +1,14 @@
+# Compiled files
 *.py[co]
+
+# Config files
 *.config
+
+# Editor leftovers
 *.swp
+*~
+.idea
+
+# Runtime files
 *.log
 *.pid
-*~
