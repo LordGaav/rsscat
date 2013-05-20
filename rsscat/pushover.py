@@ -29,7 +29,7 @@ def pushover_notify(items=None):
 	date_cutoff = datetime.datetime.now() - datetime.timedelta(days=1)
 
 	if not isinstance(items, list):
-		items = col.find({ "date": { "lte": date_cutoff }, "notifications.pushover": { "$not": { "$exists": True } }  })
+		items = col.find({ "date": { "$gte": date_cutoff }, "notifications.pushover": { "$not": { "$exists": True } }  })
 
 		if items.count() == 0:
 			logger.debug("No notifications need sending")
