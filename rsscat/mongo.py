@@ -15,7 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with rsscat. If not, see <http://www.gnu.org/licenses/>.
 
-import rsscat
 from pymongo.connection import Connection
 from bson.dbref import DBRef as dbref
 
