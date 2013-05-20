@@ -26,7 +26,7 @@ import BitTorrent.bencode
 
 def downloadFeeds():
 	logger = rsscat.getLogger("{0}.{1}".format(__name__, "downloadFeeds"))
-	logger.info("FeedDownloader starting")
+	logger.debug("FeedDownloader starting")
 
 	col = get_collection('feeds')
 	feeds = col.find({ "enabled": True })
@@ -34,7 +34,7 @@ def downloadFeeds():
 		logger.debug("Processing feed {0}".format(feed['name']))
 		processItems(feed)
 
-	logger.info("FeedDownloader is finished")
+	logger.debug("FeedDownloader is finished")
 
 def processItems(_feed):
 	logger = rsscat.getLogger("{0}.{1}".format(__name__, "processItems"))
