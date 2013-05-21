@@ -1,3 +1,4 @@
+![RSSCat :3](https://github.com/LordGaav/rsscat/blob/develop/icons/rsscat_ios_72.png?raw=true "RSSCat :3")
 RSSCat
 ======
 
