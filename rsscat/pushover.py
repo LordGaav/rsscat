@@ -59,4 +59,4 @@ def pushover_notify(items=None):
 			message['status'] = "ok"
 			logger.info("Sent Pushover notification for {0}".format(item['title']))
 
-		col.update({ "_id": item['_id']}, { "$set": { "notifications.pusover": message } })
+		col.update({ "_id": item['_id']}, { "$set": { "notifications.pushover": message } })
